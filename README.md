@@ -1,7 +1,8 @@
 # scJoint
 
+To run scJoint example (multi-modal control case), please clone the github repository and then unzip the `data.zip` folder, which includes the processed CITE-seq and ASAP-seq PBMC data from control condition from GSE156478.
 
-First, run the following codes in terminal to preprocess the data.
+In terminal, run the following codes to preprocess the data.
 
 ```
 cd data_proc
@@ -25,4 +26,5 @@ cd ../stage3
 ./stage3.sh
 ```
 
+The results are saved in `stage3/output_txt/0`.
 
