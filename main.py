@@ -8,28 +8,24 @@ from util.trainingprocess_stage3 import TrainingProcessStage3
 from util.knn import KNN
 
 def main():    
-    # initialization 
-    config = Config()    
-    
     # hardware constraint for speed test
-    torch.set_num_threads(config.num_threads)
-    
-    if config.seed != None:
-        torch.manual_seed(config.seed)
-        
+    torch.set_num_threads(1)
+
     os.environ['OMP_NUM_THREADS'] = '1'
     
-
+    # initialization 
+    config = Config()    
+    torch.manual_seed(config.seed)
     print('Start time: ', datetime.now().strftime('%H:%M:%S'))
 
     
     # stage1 training
     print('Training start [Stage1]')
-    model_stage1= TrainingProcessStage1(config)
+    model_stage1= TrainingProcessStage1(config)    
     for epoch in range(config.epochs_stage1):
         print('Epoch:', epoch)
         model_stage1.train(epoch)
-        
+    
     print('Write embeddings')
     model_stage1.write_embeddings()
     print('Stage 1 finished: ', datetime.now().strftime('%H:%M:%S'))
@@ -39,13 +35,13 @@ def main():
     KNN(config, neighbors = 30, knn_rna_samples=20000)
     print('KNN finished: ', datetime.now().strftime('%H:%M:%S'))
     
-
+    
     # stage3 training
     print('Training start [Stage3]')
-    model_stage3 = TrainingProcessStage3(config)
+    model_stage3 = TrainingProcessStage3(config)    
     for epoch in range(config.epochs_stage3):
-        print('Epoch:', epoch)
-        model_stage3.train(epoch)
+       print('Epoch:', epoch)
+       model_stage3.train(epoch)
         
     print('Write embeddings [Stage3]')
     model_stage3.write_embeddings()

@@ -11,11 +11,20 @@ from util.closs import L1regularization, CellLoss, EncodingLoss
 from util.utils import *
 
 
-def prepare_input(data_list):
+def prepare_input(data_list, config):
     output = []
     for data in data_list:
-        output.append(Variable(data.cuda()))
+        output.append(Variable(data.to(config.device)))
     return output
+
+
+def def_cycle(iterable):
+    iterator = iter(iterable)
+    while True:
+        try:
+            yield next(iterator)
+        except StopIteration:
+            iterator = iter(iterable)
 
 
 class TrainingProcessStage1():
@@ -27,13 +36,17 @@ class TrainingProcessStage1():
         for atac_loader in self.train_atac_loaders:
             self.training_iteration += len(atac_loader)
         
-        # initialize dataset        
-        self.model_encoder = torch.nn.DataParallel(Net_encoder(config.input_size).cuda())
-        self.model_cell = torch.nn.DataParallel(Net_cell(config.number_of_class).cuda())
+        # initialize dataset       
+        if self.config.use_cuda:  
+            self.model_encoder = torch.nn.DataParallel(Net_encoder(config.input_size).to(self.config.device))
+            self.model_cell = torch.nn.DataParallel(Net_cell(config.number_of_class).to(self.config.device))
+        else:
+            self.model_encoder = Net_encoder(config.input_size).to(self.config.device)
+            self.model_cell = Net_cell(config.number_of_class).to(self.config.device)
                 
         # initialize criterion (loss)
         self.criterion_cell = CellLoss()
-        self.criterion_encoding = EncodingLoss(dim=64, p=config.p)
+        self.criterion_encoding = EncodingLoss(dim=64, p=config.p, use_gpu = self.config.use_cuda)
         self.l1_regular = L1regularization()
         
         # initialize optimizer (sgd/momemtum/weight decay)
@@ -74,11 +87,11 @@ class TrainingProcessStage1():
         iter_rna_loaders = []
         iter_atac_loaders = []
         for rna_loader in self.train_rna_loaders:
-            iter_rna_loaders.append(cycle(iter(rna_loader)))
+            iter_rna_loaders.append(def_cycle(rna_loader))
         for atac_loader in self.train_atac_loaders:
-            iter_atac_loaders.append(cycle(iter(atac_loader)))
+            iter_atac_loaders.append(def_cycle(atac_loader))
                 
-        for batch_idx in range(int(self.training_iters)):
+        for batch_idx in range(self.training_iters):
             # rna forward
             rna_embeddings = []
             rna_cell_predictions = []
@@ -86,7 +99,7 @@ class TrainingProcessStage1():
             for iter_rna_loader in iter_rna_loaders:
                 rna_data, rna_label = next(iter_rna_loader)    
                 # prepare data
-                rna_data, rna_label = prepare_input([rna_data, rna_label])
+                rna_data, rna_label = prepare_input([rna_data, rna_label], self.config)
                 # model forward
                 rna_embedding = self.model_encoder(rna_data)
                 rna_cell_prediction = self.model_cell(rna_embedding)
@@ -100,7 +113,7 @@ class TrainingProcessStage1():
             for iter_atac_loader in iter_atac_loaders:
                 atac_data = next(iter_atac_loader)    
                 # prepare data
-                atac_data = prepare_input([atac_data])[0]
+                atac_data = prepare_input([atac_data], self.config)[0]
                 # model forward
                 atac_embedding = self.model_encoder(atac_data)
                 atac_cell_prediction = self.model_cell(atac_embedding)
@@ -121,9 +134,9 @@ class TrainingProcessStage1():
             # update encoding weights
             self.optimizer_encoder.zero_grad()  
             regularization_loss_encoder.backward(retain_graph=True)         
-            cell_loss.backward(retain_graph=True)
+            #cell_loss.backward(retain_graph=True)
             encoding_loss.backward(retain_graph=True)            
-            self.optimizer_encoder.step()
+            #self.optimizer_encoder.step()
               
             
             regularization_loss_cell = self.l1_regular(self.model_cell)
@@ -131,6 +144,7 @@ class TrainingProcessStage1():
             self.optimizer_cell.zero_grad()
             cell_loss.backward(retain_graph=True)
             regularization_loss_cell.backward(retain_graph=True) 
+            self.optimizer_encoder.step()
             self.optimizer_cell.step()
 
             # print log
@@ -163,7 +177,7 @@ class TrainingProcessStage1():
             fp_pre = open('./output/' + db_name + '_predictions.txt', 'w')
             for batch_idx, (rna_data, rna_label) in enumerate(rna_loader):    
                 # prepare data
-                rna_data, rna_label = prepare_input([rna_data, rna_label])
+                rna_data, rna_label = prepare_input([rna_data, rna_label], self.config)
                     
                 # model forward
                 rna_embedding = self.model_encoder(rna_data)
@@ -205,7 +219,7 @@ class TrainingProcessStage1():
             fp_pre = open('./output/' + db_name + '_predictions.txt', 'w')
             for batch_idx, (atac_data) in enumerate(atac_loader):    
                 # prepare data
-                atac_data = prepare_input([atac_data])[0]
+                atac_data = prepare_input([atac_data], self.config)[0]
                 
                 # model forward
                 atac_embedding = self.model_encoder(atac_data)

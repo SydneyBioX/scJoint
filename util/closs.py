@@ -51,9 +51,12 @@ def cosine_sim(x, y):
 
 
 class EncodingLoss(nn.Module):
-    def __init__(self, dim=64, p =0.8):
+    def __init__(self, dim=64, p =0.8, use_gpu = True):
         super(EncodingLoss, self).__init__()
-        self.identity_matrix = torch.tensor(np.identity(dim)).float().cuda()
+        if use_gpu:
+            self.identity_matrix = torch.tensor(np.identity(dim)).float().cuda()
+        else:
+            self.identity_matrix = torch.tensor(np.identity(dim)).float()
         self.p = p 
         self.dim = dim
         

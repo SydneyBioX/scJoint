@@ -11,6 +11,7 @@ scJoint is developed using `PyTorch` 1.0.0 and has been tested under both  `PyTo
 + Tutorial for 10x Genomics data: 
     + process data from `SingleCellExperiment` to scJoint's input [link](https://github.com/sydneybiox/scJoint/blob/main/tutorial/sce_to_h5.ipynb)
     + scJoint integration analysis [link](https://github.com/sydneybiox/scJoint/blob/main/tutorial/Analysis%20of%2010xGenomics%20data%20using%20scJoint.ipynb)
++ Tutorial for mouse primary motor cortex that integrates transcriptomics, chromatin accessbility and methylation: [link](https://github.com/sydneybiox/scJoint/blob/main/tutorial/MousePrimaryMotorCortex.ipynb)
 
 ## Installation
 
@@ -67,6 +68,9 @@ The script `config.py` indicate the arguments for scJoint, which needs to be mod
 
 ### Training config
 
++ `use_cuda`: Whether GPU is used
++ `threads`: Number of threads used (set as 1 by default)
+
 + `batch_size`: Batch size (set as 256 by default)
 + `lr_stage1`: Learning rate for stage 1
 + `lr_stage3`: Learning rate for stage 3
@@ -77,7 +81,7 @@ The script `config.py` indicate the arguments for scJoint, which needs to be mod
 + `embedding_size`: Number of nodes in the embedding (hidden) layer (set as 64 by default)
 + `momentum`: Momentum for SGD (set as 0.9 by default)
 + `center_weight`: The weight for center loss (set as 1 by default)
-+ `num_threads`: Number of threads used (set as 1 by default)
++ `with_crossentorpy`: `True` indicates well differentiated cell type mode, `False` indicates to run trajectory mode of scJoint.
 + `seed`: seed to be used (set as none by default)
 
 The configuration we used in our paper can be found in [link](https://github.com/sydneybiox/scJoint/blob/main/tutorial/config_notes.ipynb).

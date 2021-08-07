@@ -2,7 +2,7 @@ import sys
 import time
 import os
 import torch
-#import shutil
+import shutil
 
 last_time = time.time()
 begin_time = last_time
