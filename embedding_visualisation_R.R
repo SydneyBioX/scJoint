@@ -177,7 +177,7 @@ if (opt$UMAP) {
     set.seed(2020)
     print("Running UMAP")
     
-    umap_res <- uwot::umap(combine_embedding)
+    umap_res <- uwot::umap(combine_embedding, min_dist = 0.3)
 
     df <- data.frame(UMAP1 = umap_res[, 1], UMAP2 = umap_res[, 2],
                      prediction = prediction,

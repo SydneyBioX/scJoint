@@ -11,7 +11,7 @@ scJoint is developed using `PyTorch` 1.0.0 and has been tested under both  `PyTo
 + Tutorial for 10x Genomics data: 
     + process data from `SingleCellExperiment` to scJoint's input [link](https://github.com/sydneybiox/scJoint/blob/main/tutorial/sce_to_h5.ipynb)
     + scJoint integration analysis [link](https://github.com/sydneybiox/scJoint/blob/main/tutorial/Analysis%20of%2010xGenomics%20data%20using%20scJoint.ipynb)
-+ Tutorial for mouse primary motor cortex that integrates transcriptomics, chromatin accessbility and methylation: [link](https://github.com/sydneybiox/scJoint/blob/main/tutorial/MousePrimaryMotorCortex.ipynb)
++ Tutorial for mouse primary motor cortex that integrates transcriptomics, chromatin accessbility and methylation: [link](https://github.com/sydneybiox/scJoint/blob/main/tutorial/MousePrimaryMotorCortex.ipynb), the data can be donwloaded from [link](https://www.maths.usyd.edu.au/u/yingxinl/wwwnb/scJoint/data_MOp.zip)
 
 ## Installation
 
