@@ -128,7 +128,12 @@ Output of `embedding_visualisation_R.R`:
 + Visualisation of TSNE and UMAP: `TSNE_plot.pdf`, `UMAP_plot.pdf`
 
 
+## Online app 
 
+scJoint is also available via superbio: https://app.superbio.ai/apps/114/.
 
+## Reference
+
+Lin, Y., Wu, T.Y., Wan, S., Yang, J.Y., Wong, W.H. and Wang, Y.X., 2022. scJoint integrates atlas-scale single-cell RNA-seq and ATAC-seq data with transfer learning. Nature Biotechnology, 40(5), pp.703-710.
 
 
